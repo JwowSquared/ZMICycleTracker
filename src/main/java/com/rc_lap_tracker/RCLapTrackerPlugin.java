@@ -1,4 +1,4 @@
-package com.rc_lap_tracker;
+package net.runelite.client.plugins.ZMICycleTracker;
 
 import javax.inject.Inject;
 
@@ -55,6 +55,7 @@ public class RCLapTrackerPlugin extends Plugin
 	private int cycle;
 	private boolean hasCrafted;
 	private boolean isMidRun;
+	private boolean inGuardiansOfTheRift;
 
 	private static final int SPELL_CONTACT_ANIMATION_ID = 4413;
 	private static final int CRAFT_RUNES_ANIMATION_ID = 791;
@@ -159,9 +160,21 @@ public class RCLapTrackerPlugin extends Plugin
 	{
 		int containerId = event.getContainerId();
 
+		ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+		if (inventory != null) {
+			if (inventory.contains(ItemID.CATALYTIC_GUARDIAN_STONE) || inventory.contains(ItemID.ELEMENTAL_GUARDIAN_STONE)) {
+				inGuardiansOfTheRift = true;
+			}
+			else if (inGuardiansOfTheRift) {
+				hasCrafted = false;
+				inGuardiansOfTheRift = false;
+			}
+		}
+
 		if (containerId == InventoryID.BANK.getId())
 		{
 			hasCrafted = false;
+			inGuardiansOfTheRift = false;
 		}
 	}
 }
