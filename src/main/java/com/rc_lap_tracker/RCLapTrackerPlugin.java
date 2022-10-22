@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.ZMICycleTracker;
+package com.rc_lap_tracker;
 
 import javax.inject.Inject;
 
