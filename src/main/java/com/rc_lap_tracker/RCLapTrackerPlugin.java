@@ -26,9 +26,9 @@ import net.runelite.api.events.AnimationChanged;
 
 @Slf4j
 @PluginDescriptor(
-		name = "Runecraft Lap Tracker",
+		name = "RC Lap Tracker",
 		description = "Shows you how many laps until your largest pouch degrades",
-		tags = {"runecraft", "rune", "lap", "tracker", "pouch", "essence", "zmi"}
+		tags = {"rc", "runecraft", "rune", "lap", "tracker", "pouch", "essence", "zmi"}
 )
 public class RCLapTrackerPlugin extends Plugin
 {
