@@ -109,10 +109,9 @@ public class RCLapTrackerPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged ev)
 	{
-		int oldTarget = target;
-		target = config.highestPouch().getTarget();
-		if (oldTarget != target && !isMidRun) {
-			cycle = target;
+		if (ev.getGroup().equals(RCLapTrackerConfig.GROUP_NAME) && !isMidRun)
+		{
+			cycle = config.highestPouch().getTarget();
 			updateInfoBox();
 		}
 	}
