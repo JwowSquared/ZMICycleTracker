@@ -11,14 +11,4 @@ public interface RCLapTrackerConfig extends Config
 	String CYCLE_KEY = "cycle";
 	String HASCRAFTED_KEY = "hascrafted";
 	String ISMIDRUN_KEY = "ismidrun";
-	@ConfigItem(
-			keyName = "highestPouch",
-			name = "Highest Pouch",
-			description = "Configures the counter reset value to match the highest pouch in use",
-			position = 2
-	)
-	default HighestPouch highestPouch()
-	{
-		return HighestPouch.COLOSSAL;
-	}
 }

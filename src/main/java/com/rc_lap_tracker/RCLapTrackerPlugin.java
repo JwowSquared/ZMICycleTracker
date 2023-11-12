@@ -52,6 +52,7 @@ public class RCLapTrackerPlugin extends Plugin
 	{
 		return configManager.getConfig(RCLapTrackerConfig.class);
 	}
+	
 	private jwowWriteableCounter counterBox;
 
 	private long lastAction;
@@ -59,8 +60,8 @@ public class RCLapTrackerPlugin extends Plugin
 	private int cycle;
 	private boolean hasCrafted;
 	private boolean isMidRun;
-
 	private boolean isActive;
+	
 	private static final int SPELL_CONTACT_ANIMATION_ID = 4413;
 	private static final int CRAFT_RUNES_ANIMATION_ID = 791;
 
@@ -80,11 +81,7 @@ public class RCLapTrackerPlugin extends Plugin
 
 	@Override
 	protected void startUp(){
-		target = config.highestPouch().getTarget();
 		cycle = getIntConfig(RCLapTrackerConfig.CYCLE_KEY);
-		if (cycle == -1)
-			cycle = target;
-
 		hasCrafted = getBooleanConfig(RCLapTrackerConfig.HASCRAFTED_KEY);
 		isMidRun = getBooleanConfig(RCLapTrackerConfig.ISMIDRUN_KEY);
 		counterBox = null;
@@ -104,16 +101,6 @@ public class RCLapTrackerPlugin extends Plugin
 
 		if (wasActive != isActive)
 			updateInfoBox();
-	}
-
-	@Subscribe
-	public void onConfigChanged(ConfigChanged ev)
-	{
-		if (ev.getGroup().equals(RCLapTrackerConfig.GROUP_NAME) && !isMidRun)
-		{
-			cycle = config.highestPouch().getTarget();
-			updateInfoBox();
-		}
 	}
 
 	@Override
@@ -160,10 +147,7 @@ public class RCLapTrackerPlugin extends Plugin
 			return;
 		}
 
-		String playerName = client.getLocalPlayer().getName();
-		String actorName = event.getActor().getName();
-
-		if (!playerName.equals(actorName)) {
+		if (!client.getLocalPlayer().getName().equals(event.getActor().getName())) {
 			return;
 		}
 
@@ -174,13 +158,11 @@ public class RCLapTrackerPlugin extends Plugin
 			lastAction = System.currentTimeMillis();
 			updateInfoBox();
 		}
-		else if (!hasCrafted && animId == CRAFT_RUNES_ANIMATION_ID) {
+		else if (animId == CRAFT_RUNES_ANIMATION_ID && !hasCrafted && cycle > 0) {
 			hasCrafted = true;
 			isMidRun = true;
 			lastAction = System.currentTimeMillis();
-			if (cycle > 0) {
-				cycle--;
-			}
+			cycle--;
 			updateInfoBox();
 		}
 	}
@@ -188,11 +170,25 @@ public class RCLapTrackerPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		int containerId = event.getContainerId();
-
-		if (containerId == InventoryID.BANK.getId())
+		if (event.getContainerId() == InventoryID.BANK.getId())
 		{
 			hasCrafted = false;
+			target = 0;
+			ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+			if (inventory != null) {
+				if (inventory.contains(ItemID.COLOSSAL_POUCH))
+					target = 8;
+				else if (inventory.contains(ItemID.GIANT_POUCH))
+					target = 10;
+				else if (inventory.contains(ItemID.LARGE_POUCH))
+					target = 29;
+				else if (inventory.contains(ItemID.MEDIUM_POUCH))
+					target = 45;
+			}
+			if (!isMidRun) {
+				cycle = target;
+				updateInfoBox();
+			}
 		}
 	}
 }
